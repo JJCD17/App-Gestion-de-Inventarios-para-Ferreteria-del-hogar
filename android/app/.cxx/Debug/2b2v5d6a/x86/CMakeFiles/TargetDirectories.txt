@@ -1,0 +1,2 @@
+E:/domin/Proyectos/inventario/android/app/.cxx/Debug/2b2v5d6a/x86/CMakeFiles/edit_cache.dir
+E:/domin/Proyectos/inventario/android/app/.cxx/Debug/2b2v5d6a/x86/CMakeFiles/rebuild_cache.dir

@@ -1,0 +1,2 @@
+E:/domin/Proyectos/inventario/android/app/.cxx/RelWithDebInfo/1h3d3226/arm64-v8a/CMakeFiles/edit_cache.dir
+E:/domin/Proyectos/inventario/android/app/.cxx/RelWithDebInfo/1h3d3226/arm64-v8a/CMakeFiles/rebuild_cache.dir
