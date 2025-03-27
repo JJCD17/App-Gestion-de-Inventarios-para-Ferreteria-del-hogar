@@ -13,8 +13,8 @@ Aplicación de gestión de inventario desarrollada en Flutter, diseñada para op
 ✅ Interfaz intuitiva y fácil de usar.
 
 🛠️ Tecnologías Utilizadas
-Flutter (Dart)
+- Flutter (Dart)
 
-Hive / SQLite (Almacenamiento local)
+- Hive / SQLite (Almacenamiento local)
 
-Provider / Riverpod (Gestión de estado)
+- Provider / Riverpod (Gestión de estado)
