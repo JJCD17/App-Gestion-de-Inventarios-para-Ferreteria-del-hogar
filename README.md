@@ -1,8 +1,8 @@
-# inventario
+# Inventario
 
 Gestión de Inventario - Ferretería del Hogar
 
-## Getting Started
+## Descripción
 
 Aplicación de gestión de inventario desarrollada en Flutter, diseñada para optimizar el control de productos en Ferretería del Hogar. Permite operar sin conexión, agilizar búsquedas y mejorar la administración de stock de manera eficiente.
 
