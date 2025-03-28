@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../services/product.dart';
-import 'editProductScreen.dart';
+import 'edit_product.dart';
 import '../services/local_storage_service.dart';
 import 'dart:io';
 
@@ -16,10 +16,10 @@ class ProductDetailScreen extends StatefulWidget {
   });
 
   @override
-  _ProductDetailScreenState createState() => _ProductDetailScreenState();
+  ProductDetailScreenState createState() => ProductDetailScreenState();
 }
 
-class _ProductDetailScreenState extends State<ProductDetailScreen> {
+class ProductDetailScreenState extends State<ProductDetailScreen> {
   late Product product;
 
   @override
