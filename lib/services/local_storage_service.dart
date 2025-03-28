@@ -17,7 +17,6 @@ class LocalStorageService {
   _initDatabase() async {
     var dbPath = await getDatabasesPath();
     var path = join(dbPath, 'inventory.db');
-
     return await openDatabase(path, version: 1, onCreate: (db, version) async {
       await db.execute('''
         CREATE TABLE products (

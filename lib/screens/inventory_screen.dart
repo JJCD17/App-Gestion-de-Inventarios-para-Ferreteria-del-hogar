@@ -7,15 +7,17 @@ import 'details_screen.dart';
 import 'dart:io';
 
 class InventoryScreen extends StatefulWidget {
+  const InventoryScreen({super.key});
+
   @override
-  _InventoryScreenState createState() => _InventoryScreenState();
+  InventoryScreenState createState() => InventoryScreenState();
 }
 
-class _InventoryScreenState extends State<InventoryScreen> {
+class InventoryScreenState extends State<InventoryScreen> {
   final LocalStorageService _storageService = LocalStorageService();
   List<Product> _products = [];
   List<Product> _filteredProducts = [];
-  TextEditingController _searchController = TextEditingController();
+  final TextEditingController _searchController = TextEditingController();
   int _selectedFilter = 0;
 
   @override
@@ -67,8 +69,26 @@ class _InventoryScreenState extends State<InventoryScreen> {
             ),
             TextButton(
               onPressed: () {
-                Navigator.pop(context); // Cerrar el diálogo
-                _deleteProduct(id); // Eliminar el producto
+                try {
+                  Navigator.pop(context); // Cerrar el diálogo
+                  _deleteProduct(id); // Eliminar el producto
+
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Producto Eliminado correctamente'),
+                      backgroundColor: Colors.green,
+                      duration: Duration(seconds: 2),
+                    ),
+                  );
+                } catch (e) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Error al Eliminar el producto'),
+                      backgroundColor: Colors.red,
+                      duration: Duration(seconds: 2),
+                    ),
+                  );
+                }
               },
               child: Text(
                 'Eliminar',
@@ -185,7 +205,7 @@ class _InventoryScreenState extends State<InventoryScreen> {
         padding: const EdgeInsets.all(8.0),
         child: Column(
           children: [
-            Container(
+            SizedBox(
               height: 50,
               child: SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
@@ -316,11 +336,11 @@ class _InventoryScreenState extends State<InventoryScreen> {
           // Recargar productos después agregar uno nuevo
           _loadProducts();
         },
+        backgroundColor: Color.fromARGB(255, 14, 90, 0),
         child: const Icon(
           Icons.add,
           color: Colors.white,
         ),
-        backgroundColor: Color.fromARGB(255, 14, 90, 0),
       ),
     );
   }

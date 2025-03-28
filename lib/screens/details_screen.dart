@@ -31,14 +31,13 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF202020),
+      backgroundColor: const Color.fromARGB(255, 32, 32, 32),
       appBar: AppBar(
         title: Text(
           'Detalles del Producto',
           style: GoogleFonts.lato(color: Colors.white, fontSize: 22),
         ),
         backgroundColor: const Color.fromARGB(255, 11, 93, 174),
-        centerTitle: true,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -127,7 +126,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 ElevatedButton(
-                  onPressed: () {
+                  onPressed: () async {
                     _showDeleteConfirmationDialog(context);
                   },
                   style: ElevatedButton.styleFrom(
@@ -243,35 +242,44 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text(
-            'Confirmar Eliminación',
-            style: GoogleFonts.lato(color: Colors.white),
-          ),
+          title: Text('Confirmar Eliminación',
+              style: GoogleFonts.lato(color: Colors.white)),
           backgroundColor: const Color.fromARGB(255, 44, 44, 44),
-          content: Text(
-            '¿Estás seguro de que deseas eliminar este producto?',
-            style: GoogleFonts.lato(color: Colors.white70),
-          ),
+          content: Text('¿Estás seguro de que deseas eliminar este producto?',
+              style: GoogleFonts.lato(color: Colors.white70)),
           actions: [
             TextButton(
               onPressed: () {
-                Navigator.of(context).pop(); // Cierra el diálogo
+                Navigator.of(context).pop();
               },
-              child: Text(
-                'Cancelar',
-                style: GoogleFonts.lato(color: Colors.white),
-              ),
+              child: Text('Cancelar',
+                  style: GoogleFonts.lato(color: Colors.white)),
             ),
             TextButton(
               onPressed: () {
-                widget.onProductDeleted(product);
-                Navigator.of(context).pop(); // Cierra el diálogo
-                Navigator.of(context).pop(); // Regresa a la pantalla anterior
+                try {
+                  widget.onProductDeleted(product);
+                  Navigator.of(context).pop(); // Cierra el diálogo
+                  Navigator.of(context).pop(); // Regresa a la pantalla anterior
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Producto Eliminado correctamente'),
+                      backgroundColor: Colors.green,
+                      duration: Duration(seconds: 2),
+                    ),
+                  );
+                } catch (e) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Error al Eliminar el producto'),
+                      backgroundColor: Colors.red,
+                      duration: Duration(seconds: 2),
+                    ),
+                  );
+                }
               },
-              child: Text(
-                'Eliminar',
-                style: GoogleFonts.lato(color: Colors.red),
-              ),
+              child:
+                  Text('Eliminar', style: GoogleFonts.lato(color: Colors.red)),
             ),
           ],
         );

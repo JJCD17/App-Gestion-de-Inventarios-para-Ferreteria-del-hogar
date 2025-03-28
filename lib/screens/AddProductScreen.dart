@@ -6,11 +6,15 @@ import '../services/local_storage_service.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class AddProductScreen extends StatefulWidget {
+  const AddProductScreen({
+    super.key,
+  });
+
   @override
-  _AddProductScreenState createState() => _AddProductScreenState();
+  AddProductScreenState createState() => AddProductScreenState();
 }
 
-class _AddProductScreenState extends State<AddProductScreen> {
+class AddProductScreenState extends State<AddProductScreen> {
   final LocalStorageService _storageService = LocalStorageService();
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _quantityController = TextEditingController();
@@ -19,9 +23,9 @@ class _AddProductScreenState extends State<AddProductScreen> {
   File? _selectedImage;
 
   Future<void> _pickImage() async {
-    final ImagePicker _picker = ImagePicker();
+    final ImagePicker picker = ImagePicker();
     final XFile? pickedFile =
-        await _picker.pickImage(source: ImageSource.gallery);
+        await picker.pickImage(source: ImageSource.gallery);
 
     if (pickedFile != null) {
       setState(() {
@@ -31,23 +35,43 @@ class _AddProductScreenState extends State<AddProductScreen> {
   }
 
   void _addProduct() async {
-    if (_nameController.text.isNotEmpty &&
-        _quantityController.text.isNotEmpty &&
-        _minquantityController.text.isNotEmpty &&
-        _priceController.text.isNotEmpty) {
-      Product newProduct = Product(
-        name: _nameController.text,
-        quantity: int.parse(_quantityController.text),
-        minquantity: int.parse(_minquantityController.text),
-        price: double.parse(_priceController.text),
-        imageUrl: _selectedImage?.path ?? 'assets/images/default_image.jpg',
+    try {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Producto añadido correctamente'),
+          backgroundColor: Colors.green,
+          duration: Duration(seconds: 2),
+        ),
       );
-      await _storageService.saveProduct(newProduct);
-      if (mounted) {
-        Navigator.pop(context);
+      if (_nameController.text.isNotEmpty &&
+          _quantityController.text.isNotEmpty &&
+          _minquantityController.text.isNotEmpty &&
+          _priceController.text.isNotEmpty) {
+        Product newProduct = Product(
+          name: _nameController.text,
+          quantity: int.parse(_quantityController.text),
+          minquantity: int.parse(_minquantityController.text),
+          price: double.parse(_priceController.text),
+          imageUrl: _selectedImage?.path ?? 'assets/images/default_image.jpg',
+        );
+        await _storageService.saveProduct(newProduct);
+        if (mounted) {
+          Navigator.pop(context);
+        }
+      } else {
+        _showErrorDialog('Por favor, complete todos los campos.');
       }
-    } else {
-      _showErrorDialog('Por favor, complete todos los campos.');
+    } catch (e) {
+      // Mostrar notificación de error si algo falla
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error al añadir el producto'),
+            backgroundColor: Colors.red,
+            duration: Duration(seconds: 2),
+          ),
+        );
+      }
     }
   }
 
@@ -87,42 +111,46 @@ class _AddProductScreenState extends State<AddProductScreen> {
       backgroundColor: const Color.fromARGB(255, 32, 32, 32),
       appBar: AppBar(
         title: Text('Agregar Producto',
-            style: GoogleFonts.lato(color: Colors.white)),
+            style: GoogleFonts.lato(color: Colors.white, fontSize: 22)),
         backgroundColor: const Color.fromARGB(255, 11, 93, 174),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
+            const SizedBox(height: 16.0),
             TextField(
+              decoration: InputDecoration(
+                labelText: 'Nombre',
+                labelStyle: GoogleFonts.lato(color: Colors.white),
+                enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.white)),
+                focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.blue)),
+              ),
               controller: _nameController,
               textCapitalization: TextCapitalization
                   .words, // Hace que cada palabra comience con mayúscula
-              style: GoogleFonts.lato(color: Colors.white, fontSize: 24),
-              decoration: const InputDecoration(
-                labelText: 'Nombre',
-                labelStyle: TextStyle(color: Colors.white),
-                enabledBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: Colors.white),
-                ),
-              ),
+              style: GoogleFonts.lato(color: Colors.white70, fontSize: 20),
             ),
             const SizedBox(height: 16.0),
             Row(
               children: [
-                Container(
+                SizedBox(
                   width: 200,
                   child: TextField(
                     controller: _quantityController,
                     keyboardType: TextInputType.number,
-                    style: GoogleFonts.lato(color: Colors.white, fontSize: 24),
-                    decoration: const InputDecoration(
+                    decoration: InputDecoration(
                       labelText: 'Cantidad',
-                      labelStyle: TextStyle(color: Colors.white),
-                      enabledBorder: UnderlineInputBorder(
-                        borderSide: BorderSide(color: Colors.white),
-                      ),
+                      labelStyle: GoogleFonts.lato(color: Colors.white),
+                      enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.white)),
+                      focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.blue)),
                     ),
+                    style:
+                        GoogleFonts.lato(color: Colors.white70, fontSize: 20),
                   ),
                 ),
                 SizedBox(width: 30),
@@ -159,19 +187,21 @@ class _AddProductScreenState extends State<AddProductScreen> {
             const SizedBox(height: 16.0),
             Row(
               children: [
-                Container(
+                SizedBox(
                   width: 200,
                   child: TextField(
                     controller: _minquantityController,
                     keyboardType: TextInputType.number,
-                    style: GoogleFonts.lato(color: Colors.white, fontSize: 24),
-                    decoration: const InputDecoration(
+                    decoration: InputDecoration(
                       labelText: 'Cantidad minima',
-                      labelStyle: TextStyle(color: Colors.white),
-                      enabledBorder: UnderlineInputBorder(
-                        borderSide: BorderSide(color: Colors.white),
-                      ),
+                      labelStyle: GoogleFonts.lato(color: Colors.white),
+                      enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.white)),
+                      focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.blue)),
                     ),
+                    style:
+                        GoogleFonts.lato(color: Colors.white70, fontSize: 20),
                   ),
                 ),
                 SizedBox(width: 30),
@@ -208,16 +238,19 @@ class _AddProductScreenState extends State<AddProductScreen> {
             ),
             const SizedBox(height: 16.0),
             TextField(
+              decoration: InputDecoration(
+                labelText: 'Precio',
+                labelStyle: GoogleFonts.lato(color: Colors.white),
+                enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.white)),
+                focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.blue)),
+              ),
               controller: _priceController,
               keyboardType: TextInputType.number,
-              style: GoogleFonts.lato(color: Colors.white, fontSize: 24),
-              decoration: const InputDecoration(
-                labelText: 'Precio',
-                labelStyle: TextStyle(color: Colors.white),
-                enabledBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: Colors.white),
-                ),
-              ),
+              textCapitalization: TextCapitalization
+                  .words, // Hace que cada palabra comience con mayúscula
+              style: GoogleFonts.lato(color: Colors.white70, fontSize: 20),
             ),
             const SizedBox(height: 16.0),
             Column(
@@ -237,38 +270,53 @@ class _AddProductScreenState extends State<AddProductScreen> {
                       borderRadius: BorderRadius.circular(10),
                       border: Border.all(color: Colors.grey[400]!),
                     ),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(10),
-                      child: _selectedImage != null
-                          ? Image.file(
-                              _selectedImage!,
-                              width: 140,
-                              height: 140,
-                              fit: BoxFit.cover,
-                              errorBuilder: (context, error, stackTrace) {
-                                return Icon(Icons.error, color: Colors.red);
-                              },
-                            )
-                          : Center(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(
-                                    Icons.add_a_photo,
-                                    color: Colors.grey[800],
-                                    size: 40,
-                                  ),
-                                  SizedBox(height: 8),
-                                  Text(
-                                    'Añadir imagen',
-                                    style: GoogleFonts.lato(
-                                      color: Colors.grey[800],
-                                      fontSize: 14,
-                                    ),
-                                  ),
-                                ],
+                    child: Stack(
+                      children: [
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(10),
+                          child: Stack(
+                            children: [
+                              _selectedImage != null
+                                  ? Image.file(
+                                      _selectedImage!,
+                                      width: 230,
+                                      height: 230,
+                                      fit: BoxFit.cover,
+                                      errorBuilder:
+                                          (context, error, stackTrace) {
+                                        return Icon(Icons.error,
+                                            color: Colors.red);
+                                      },
+                                    )
+                                  : Container(color: Colors.grey[300]),
+                              Container(
+                                width: 230,
+                                height: 230,
+                                color: Colors.black
+                                    .withValues(alpha: 0.2), // Difuminado
                               ),
-                            ),
+                              Positioned.fill(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(Icons.add_a_photo,
+                                        color: Colors.white, size: 30),
+                                    SizedBox(height: 5),
+                                    Text(
+                                      'Añadir imagen',
+                                      style: GoogleFonts.lato(
+                                        color: Colors.white,
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
@@ -281,22 +329,42 @@ class _AddProductScreenState extends State<AddProductScreen> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  TextButton(
+                  ElevatedButton(
                     onPressed: () {
                       Navigator.pop(context);
                     },
-                    child: Text('Cancelar',
-                        style: GoogleFonts.lato(
-                            color: Color.fromARGB(255, 255, 1, 1),
-                            fontSize: 24)),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.red,
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 20, vertical: 12),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    child: Text(
+                      'Cancelar',
+                      style:
+                          GoogleFonts.lato(color: Colors.white, fontSize: 18),
+                    ),
                   ),
                   const SizedBox(width: 16.0),
-                  TextButton(
-                    onPressed: _addProduct,
-                    child: Text('Agregar',
-                        style: GoogleFonts.lato(
-                            color: Color.fromARGB(255, 0, 255, 0),
-                            fontSize: 24)),
+                  ElevatedButton(
+                    onPressed: () {
+                      _addProduct();
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.green,
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 20, vertical: 12),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    child: Text(
+                      'Agregar',
+                      style:
+                          GoogleFonts.lato(color: Colors.white, fontSize: 18),
+                    ),
                   ),
                 ],
               ),

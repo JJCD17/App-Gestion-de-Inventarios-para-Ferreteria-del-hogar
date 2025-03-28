@@ -11,10 +11,10 @@ class EditProductScreen extends StatefulWidget {
   const EditProductScreen({super.key, required this.product});
 
   @override
-  _EditProductScreenState createState() => _EditProductScreenState();
+  EditProductScreenState createState() => EditProductScreenState();
 }
 
-class _EditProductScreenState extends State<EditProductScreen> {
+class EditProductScreenState extends State<EditProductScreen> {
   late TextEditingController _nameController;
   late TextEditingController _quantityController;
   late TextEditingController _minquantityController;
@@ -62,14 +62,13 @@ class _EditProductScreenState extends State<EditProductScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF202020),
+      backgroundColor: const Color.fromARGB(255, 32, 32, 32),
       appBar: AppBar(
         title: Text(
           'Editar Producto',
           style: GoogleFonts.lato(color: Colors.white, fontSize: 22),
         ),
-        backgroundColor: const Color(0xFF0B5DAE),
-        centerTitle: true,
+        backgroundColor: const Color.fromARGB(255, 11, 93, 174),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
@@ -83,25 +82,61 @@ class _EditProductScreenState extends State<EditProductScreen> {
                 decoration: BoxDecoration(
                   color: Colors.grey[200],
                   borderRadius: BorderRadius.circular(10),
+                  border: Border.all(color: Colors.grey[400]!),
                 ),
-                child: _image != null
-                    ? ClipRRect(
-                        borderRadius: BorderRadius.circular(10),
-                        child: Image.file(_image!, fit: BoxFit.cover),
-                      )
-                    : Column(
+                child: Stack(
+                  children: [
+                    // Muestra la imagen actual del producto si existe, o la nueva imagen seleccionada
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(10),
+                      child: Stack(
+                        children: [
+                          _image != null
+                              ? Image.file(
+                                  _image!,
+                                  width: 230,
+                                  height: 230,
+                                  fit: BoxFit.cover,
+                                )
+                              : (widget.product.imageUrl.isNotEmpty &&
+                                      File(widget.product.imageUrl)
+                                          .existsSync())
+                                  ? Image.file(File(widget.product.imageUrl),
+                                      width: 230,
+                                      height: 230,
+                                      fit: BoxFit.cover)
+                                  : Container(
+                                      color: Colors
+                                          .grey[300]), // Imagen predeterminada
+                          Container(
+                            width: 230,
+                            height: 230,
+                            color: Colors.black
+                                .withValues(alpha: 0.4), // Difuminado
+                          ),
+                        ],
+                      ),
+                    ),
+                    Positioned.fill(
+                      child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(Icons.add_a_photo, color: Colors.grey[800]),
+                          Icon(Icons.add_a_photo,
+                              color: Colors.white, size: 30),
+                          SizedBox(height: 5),
                           Text(
-                            'Añadir imagen',
+                            'Cambiar imagen',
                             style: GoogleFonts.lato(
-                              color: Colors.grey[800],
-                              fontSize: 14,
+                              color: Colors.white,
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
                             ),
                           ),
                         ],
                       ),
+                    ),
+                  ],
+                ),
               ),
             ),
             SizedBox(height: 20),
@@ -136,7 +171,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
                         GoogleFonts.lato(color: Colors.white70, fontSize: 20),
                   ),
                 ),
-                SizedBox(width: 25),
+                SizedBox(width: 30),
                 Material(
                   color: const Color.fromARGB(255, 11, 93, 174),
                   borderRadius: BorderRadius.circular(20),
@@ -255,22 +290,41 @@ class _EditProductScreenState extends State<EditProductScreen> {
                 ),
                 ElevatedButton(
                   onPressed: () async {
-                    // Crear el producto actualizado
-                    final updatedProduct = Product(
-                      id: widget.product.id, // Mantener el mismo ID
-                      name: _nameController.text,
-                      quantity: int.parse(_quantityController.text),
-                      minquantity: int.parse(_minquantityController.text),
-                      price: double.parse(_priceController.text),
-                      imageUrl: _image?.path ?? widget.product.imageUrl,
-                    );
+                    try {
+                      // Crear el producto actualizado
+                      final updatedProduct = Product(
+                        id: widget.product.id, // Mantener el mismo ID
+                        name: _nameController.text,
+                        quantity: int.parse(_quantityController.text),
+                        minquantity: int.parse(_minquantityController.text),
+                        price: double.parse(_priceController.text),
+                        imageUrl: _image?.path ?? widget.product.imageUrl,
+                      );
 
-                    // Actualizar el producto en la base de datos
-                    final localStorageService = LocalStorageService();
-                    await localStorageService.updateProduct(updatedProduct);
+                      // Actualizar el producto en la base de datos
+                      final localStorageService = LocalStorageService();
+                      await localStorageService.updateProduct(updatedProduct);
 
-                    // Devolver el producto actualizado a la pantalla anterior
-                    Navigator.of(context).pop(updatedProduct);
+                      // Mostrar notificación de éxito
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('Producto actualizado correctamente'),
+                          backgroundColor: Colors.green,
+                          duration: Duration(seconds: 2),
+                        ),
+                      );
+                      // Devolver el producto actualizado a la pantalla anterior
+                      Navigator.of(context).pop(updatedProduct);
+                    } catch (e) {
+                      // Mostrar notificación de error si algo falla
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('Error al actualizar el producto'),
+                          backgroundColor: Colors.red,
+                          duration: Duration(seconds: 2),
+                        ),
+                      );
+                    }
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.green,
