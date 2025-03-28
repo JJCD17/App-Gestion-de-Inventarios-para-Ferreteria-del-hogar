@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../screens/AddProductScreen.dart';
+import 'addProductScreen.dart';
 import '../services/product.dart';
 import '../services/local_storage_service.dart';
 import 'package:google_fonts/google_fonts.dart';

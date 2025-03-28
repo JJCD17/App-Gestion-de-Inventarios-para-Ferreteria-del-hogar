@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../services/product.dart';
-import 'EditProductScreen.dart';
+import 'editProductScreen.dart';
 import '../services/local_storage_service.dart';
 import 'dart:io';
 
